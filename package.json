@@ -52,7 +52,7 @@
     "@babel/preset-react": "^7.6.3",
     "babel-plugin-dynamic-import-webpack": "^1.1.0",
     "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.15.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-jest": "^22.17.0",
