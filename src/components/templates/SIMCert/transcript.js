@@ -1,6 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { format } from "date-fns";
 import { get, groupBy } from "lodash";
+import { tz } from "moment-timezone";
+import _ from "lodash";
 import { IMG_LOGO_RP_HORIZONTAL,
          IMG_LOGO_SIM_BACKGRND_CERT,
          IMG_LOGO_SIM } from "./images";
@@ -17,12 +20,19 @@ export const fullWidthStyle = {
   height: "auto"
 };
 
+export const fullWidthStyle_01 = {
+  width: "60%",
+  height: "auto",
+  marginLeft: "4rem",
+    marginBottom: "-1.5rem"
+};
+
 export const linestyle01 = {
   width: "100%",
 };
 
 export const fullTableWidthStyle = {
-  width: "700px",
+  width: "800px",
   border: "1px solid black",
   height: "auto"
 };
@@ -157,12 +167,12 @@ export const renderHeaderText05 = () => (
  </div>
 );
 
-export const renderHeaderText02 = certificate => (
+export const renderHeaderText02 = document => (
  <div>
     <div className="row d-flex justify-content-left" style={{ marginTop: "0.8rem"}} />
      <div className="row d-flex justify-content-left" style={{ marginLeft: "0.25rem"}}>
       <div style={SIMprintTextStyle_TNR02}>
-        <p style={SIMprintTextStyle_TNR02}>Cumulative Grade Point Average:  &nbsp; {formatBold(certificate.additionalData.cumulativeScore)}</p>
+        <p style={SIMprintTextStyle_TNR02}>Cumulative Grade Point Average:  &nbsp; {formatBold(document.additionalData.cumulativeScore)}</p>
       </div>
      </div>		
  </div>
@@ -181,11 +191,11 @@ export const renderHeaderText03 = () => (
 );
 
 
-export const renderHeaderText04 = certificate => (
+export const renderHeaderText04 = document => (
  <div> 	   
     <div className="row d-flex justify-content-left" style={{ marginTop: "0.8rem" }} />
      <div className="row d-flex justify-content-left" style={{ marginLeft: "0.25rem"}}>
-	 AWARDED THE: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {formatBold(certificate.name)} 
+	 AWARDED THE: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {formatBold(document.name)} 
 	 <br/> 
 	 <hr />
 	 </div> 
@@ -209,23 +219,14 @@ export const renderHeaderText06 = () => (
 );
 
 
-// additional remarks for PET only
-export const renderRemarksGradingSystem = isNOTDPLUS => (
-  <span>
-    <br />
-    Incomplete Grade is implemented from Academic Year 2012 Semester 2 onwards
-    {isNOTDPLUS ? " for G901 Character and Citizenship Education module" : null}
-    . <br />A module for which grade point or modular credit is not accorded
-    will not be considered in the computation of the cGPA.
-  </span>
-);
+
 
 export const renderTableHeader = () => (
   <tr>
-    <th style={{ border: "1px solid", width: "10%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Grade</th>
-    <th style={{ border: "1px solid", width: "10%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Grade Points</th>
-	<th style={{ border: "1px solid", width: "20%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Marks</th>
-    <th style={{ border: "1px solid", width: "60%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Descriptor</th>
+    <th style={{ border: "1px solid", width: "12%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Grade</th>
+    <th style={{ border: "1px solid", width: "11%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Grade Points</th>
+	<th style={{ border: "1px solid", width: "22%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Marks</th>
+    <th style={{ border: "1px solid", width: "54%", backgroundColor: "#e7f3fd", paddingLeft: "10px" }}>Descriptor</th>
   </tr>
 );
 
@@ -241,13 +242,12 @@ export const renderGradeList = listGrade => {
   return strList;
 };
 
-export const renderGradingSystem = certificate => {
+export const renderGradingSystem = document => {
   // get the template name
-  const strTemplate = get(certificate, "$template");
+ // const strTemplate = get(document, "$template");
   // check it is PET template
-  const isCET = strTemplate.substr(15, 6) === "P-MAIN" ? 0 : 1;
-  // check whether it is DPLUS template
-  const isNOTDPLUS = strTemplate.substr(15, 4) === "C-DP" ? 0 : 1;
+ // const isCET = strTemplate.substr(15, 6) === "P-MAIN" ? 0 : 1;
+
 
   const listGradeText1L = [
     { grade: "A+",  score: "4.000", marks: "90 to 100", desc: "Distinction" },
@@ -264,36 +264,6 @@ export const renderGradingSystem = certificate => {
 	
   ];
 
-  const listGradeText1R = [
-    { grade: "E", 		score: "0.5", 	desc: "Fail" },
-    { grade: "F", 		score: "0.0", 	desc: "Fail" },
-    { grade: "P", 		score: "2.0", 	desc: "Pass" },
-    { grade: "N", 		score: "-", 	desc: "Null(Defaulted)" },
-    { grade: "Pass*", 	score: "-", 	desc: "Pass with Commendation" },
-    { grade: "Pass", 	score: "-", 	desc: "Pass" },
-    { grade: "Fail",  	score: "-", 	desc: "Fail" }
-  ];
-
-  const listGradeText2L = [
-    { grade: "DIST", 	score: "4.0", 	desc: "Distinction^" },
-    { grade: "A", 		score: "4.0", 	desc: "Excellent" },
-    { grade: "B+", 		score: "3.5", 	desc: "Very Good" },
-    { grade: "B", 		score: "3.0", 	desc: "Very Good" },
-    { grade: "C+", 		score: "2.5", 	desc: "Good" },
-    { grade: "C", 		score: "2.0", 	desc: "Good" },
-    { grade: "D+", 		score: "1.5",	desc: "Pass" }
-  ];
-
-  const listGradeText2R = [
-    { grade: "D", 			score: "1.0", 	desc: "Pass" },
-    { grade: "F", 			score: "0.0", 	desc: "Fail" },
-    { grade: "Pass*", 		score: "-", 	desc: "Pass with Commendation" },
-    { grade: "Pass", 		score: "-", 	desc: "Pass" },
-    { grade: "Fail", 		score: "-", 	desc: "Fail" },
-    { grade: "Exempted", 	score: "-", 	desc: "Exempted from taking the module" }
-  ];
-
-  // if PET or DPLUS, display grading system otherwise do not display
   return (
     <div className="row">
       <div className="col-12" />
@@ -315,19 +285,19 @@ export const renderGradingSystem = certificate => {
   );
 };
 
-export const renderCourse = (certificate, course) => {
+export const renderCourse = (document, course) => {
   // Get student info and course description
-  const recipientName = get(certificate, "recipient.name");
-  const recipientNric = get(certificate, "recipient.nric");
-  const recipientFin = get(certificate, "recipient.fin");  
-  const DOB = get(certificate, "recipient.Birthdate");        
+  const recipientName = get(document, "recipient.name");
+  const recipientNric = get(document, "recipient.nric");
+  const recipientFin = get(document, "recipient.fin");  
+  const DOB = get(document, "recipient.Birthdate");        
   const recipientNricFin = !recipientNric ? recipientFin : recipientNric;
-  const studentId = get(certificate, "recipient.studentId");
-  const admissionDate = get(certificate, "additionalData.admissionDate");
-  const graduationDate = get(certificate, "additionalData.graduationDate");
-  const graduationStatus = get(certificate, "recipient.Status");  
-  const strTemplate = get(certificate, "$template");  
-  const isCET = strTemplate.substr(15, 6) === "P-MAIN" ? 0 : 1;
+  const studentId = get(document, "recipient.studentId");
+  const admissionDate = get(document, "additionalData.admissionDate");
+  const graduationDate = get(document, "additionalData.graduationDate");
+  const graduationStatus = get(document, "recipient.Status");  
+//  const strTemplate = get(document, "$template");  
+//  const isCET = strTemplate.substr(15, 6) === "P-MAIN" ? 0 : 1;
 
   // Group all modules by semesters
   const groupedSubjects = groupBy(course, "semester");
@@ -354,13 +324,13 @@ export const renderCourse = (certificate, course) => {
           <div className="row">
             <div className="col-2"><strong>Course</strong></div>
             <div className="col-10">
-            <strong>:&nbsp;&nbsp;{certificate.name}</strong>
+            <strong>:&nbsp;&nbsp;{document.name}</strong>
             </div>
           </div>
 	  
           <div className="row">
-            <div className="col-2"><strong>StudentID</strong></div>
-            <div className="col-4"> <strong>:&nbsp;&nbsp; {studentId || certificate.additionalData.studentId} </strong></div>
+            <div className="col-2"><strong>Student ID</strong></div>
+            <div className="col-4"> <strong>:&nbsp;&nbsp; {studentId || document.additionalData.studentId} </strong></div>
             <div className="col-2 justify-content-left" style={{ textAlign: "left" }} >
             <strong>NRIC no./FIN</strong></div>
             <div className="col-2 justify-content-right" style={{ textAlign: "left" }} >&nbsp;
@@ -397,7 +367,7 @@ export const renderCourse = (certificate, course) => {
           <table style={fullWidthStyle}>
             <tbody>
               <tr>
-                <th style={{ textAlign: "left" }}>{isCET ? "Year/Month" : "SEMESTER"}</th>
+                <th style={{ textAlign: "left" }}>Year/Month</th>
                 <th style={{ textAlign: "left" }}>Module</th>
                 <th style={{ textAlign: "left" }}>Grade</th>
               </tr>
@@ -413,67 +383,28 @@ export const renderCourse = (certificate, course) => {
   );
 };
 
-export const renderTranscript = certificate => {
+export const renderTranscript = document => {
   // Group all modules by courses
-  const transcript = get(certificate, "transcript");
+  const transcript = get(document, "transcript");
   // const groupedCourses = groupBy(transcript, "semester");
-  const renderedCourses = renderCourse(certificate, transcript);
+  const renderedCourses = renderCourse(document, transcript);
   return <div>{renderedCourses}</div>;
 };
 
-// display GPA for PET and DPLUS
-export const renderPETGPA = GPA => (
-  <span>
-    Cumulative Grade Point Average : {GPA.toFixed(2)}
-    <br />
-  </span>
-);
 
-export const renderGPA = certificate => {
-  const GPA = get(certificate, "cumulativeScore", undefined);
-  const WithMerit = get(certificate, "additionalData.merit");
-  const WithMeritTag = WithMerit === "Y" ? "with Merit" : "";
-  const strTemplate = get(certificate, "$template");
-  const isCET = strTemplate.substr(15, 6) === "P-MAIN" ? 0 : 1;
-  const isNOTDPLUS = strTemplate.substr(15, 4) === "C-DP" ? 0 : 1;
-  const isNOTDCN = strTemplate.substr(15, 5) === "C-DCN" ? 0 : 1;
-
-  return GPA ? (
-    <div className="row">
-      <div className="col-0"> </div>
-      <div className="col-0-12" >
-        {formatBold(renderPETGPA(GPA))}
-		<br /> 
-		Successfully completed all course requirements 
-		<br />
-		<br /> 
-		AWARDED THE &nbsp;&nbsp;&nbsp;&nbsp;{formatBold(certificate.name)} {formatBold(WithMeritTag)}
-        <br />
-      </div>
-      <div className="col-0"> </div>
-      <div className="col-12 text-center">
-	  	<hr style={{ borderWidths: "2rem" }} />
-        ----{" "}
-        <strong>END OF RECORDS</strong>
-        ----{" "}
-      </div>
-    </div>
-  ) : null;
-};
-
-export const renderSignature = certificate => {
+export const renderSignature = document => {
   const certSign = formatSignatoriesPosition(
-    certificate.additionalData.transcriptSignatories[0].position
+    document.additionalData.transcriptSignatories[0].position
   );
   return (
       <div className="row d-flex justify-content-center align-items-end" style={{ marginTop: "2rem", marginBottom: "2rem" }} >
   	  <div className="col-4 text-left" style={{ marginTop: "0rem", marginBottom: "2rem" }} >
-			Date Printed:  <strong>{formatDDMMMYYYY(certificate.issuedOn)}</strong>
+			Date Printed:  <strong>{formatDDMMMYYYY(document.issuedOn)}</strong>
 	  </div>
 	  <div className="col-4" />	
 	  <div className="col-4">
-      <div className="px-4">
-         <img style={fullWidthStyle} src={certificate.additionalData.transcriptSignatories[0].signature} />
+      <div className="px-4" >
+         <img style={fullWidthStyle_01} src={document.additionalData.transcriptSignatories[0].signature} />
 	     <span style={arial10Pt}>
 			<strong>__________________________________</strong>
          </span>
@@ -498,23 +429,23 @@ export const renderFooterText = () => (
     </div> 			
 );
 
-const Template = ({ certificate }) => (
+const Template = ({ document }) => (
   <div className="container" style={ borderImgStyle }>
     {renderHeader()}
 	{renderHeaderText01()}
 	{renderHeaderText05()}
-    {renderTranscript(certificate)}
-	{renderHeaderText02(certificate)}
-	{renderHeaderText03(certificate)}
-	{renderHeaderText04(certificate)}
+    {renderTranscript(document)}
+	{renderHeaderText02(document)}
+	{renderHeaderText03(document)}
+	{renderHeaderText04(document)}
 	{renderHeaderText06()}
-    {renderGradingSystem(certificate)}
-    {renderSignature(certificate)}	
+    {renderGradingSystem(document)}
+    {renderSignature(document)}	
 	{renderFooterText()}
   </div>
 );
 
 Template.propTypes = {
-  certificate: PropTypes.object.isRequired
+  document: PropTypes.object.isRequired
 };
 export default Template;
