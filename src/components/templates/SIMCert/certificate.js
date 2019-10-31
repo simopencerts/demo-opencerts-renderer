@@ -22,7 +22,8 @@ export const TIMEZONE = "Asia/Singapore";
 export const logoLStyle = {
   textAlign: "left",
   width: "100%",
-  height: "auto"
+  height: "auto",
+    marginBottom: "-1.5rem",
 };
 export const logoRStyle = {
   width: "100%",
@@ -87,12 +88,12 @@ export const SIMprintTextStyle_TNR03 = {
   textAlign: "center"
 };
 
-export const SIMprintTextStyle_TNR04 = {
+export const SIMprintTextStyle_TNR06 = {
   fontFamily: "TimesNewRoman",
   fontWeight: "500!important",
-  fontSize: "2.4rem",
+  fontSize: "1.6rem",
   color: "solid black",
-    marginLeft: "16rem",
+    marginLeft: "23rem",
   textAlign: "left"
 };
 
@@ -109,7 +110,16 @@ export const SIMprintTextStyle_LSR01 = {
   fontWeight: "500!important",
   fontSize: "1.4rem",
   color: "black",
-  marginLeft: "16rem",
+  marginLeft: "23rem",
+  textAlign: "left"
+};
+
+export const SIMprintTextStyle_TNR04 = {
+  fontFamily: "LucidaSansRoman",
+  fontWeight: "500!important",
+  fontSize: "1.4rem",
+  color: "black",
+  marginLeft: "23rem",
   textAlign: "left"
 };
 
@@ -123,11 +133,11 @@ export const SIMprintTextStyle_LSR02 = {
 
 
 export const printTextStyle_01 = {
-  fontFamily: "GarageGothic-Regular",
+  fontFamily: "Niagara Solid",
   fontWeight: "400", 
   fontstyle: "normal",  
-  fontSize: "5.5rem",
-  textAlign: "left"
+  fontSize: "5.0rem",
+  textAlign: "center"
 };
 
 export const SIMtitleTextStyle_01 = {
@@ -170,7 +180,7 @@ export const imageStyle = {
 export const supportSUSSTextStyle = {
   display: "block",
   fontSize: "1.6rem",
-  marginLeft: "16rem",
+  marginLeft: "23rem",
   textAlign: "left"
 };
 
@@ -225,7 +235,7 @@ export const renderTwoSignatures = document => {
 	
     <div className="row d-flex justify-content-center align-items-end" style={{ marginTop: "4rem", marginBottom: "3rem" }}>
 	  <div className="col-4"> </div>
-      <div className="col-4" style={{ marginLeft: "-16rem", marginRight: "-16rem"}}>
+      <div className="col-4" style={{ marginLeft: "-12rem", marginRight: "-26rem"}}>
         <div className="signature-container">
           <img style={logoLStyle} src={get(document,"additionalData.certSignatories[0].signature")} />
 		  <span style={arial10Pt}><strong>_______________________________________</strong></span>
@@ -265,33 +275,36 @@ export const renderAwardText = document => (
       <div> <p style={SIMprintTextStyle_TNR01}>SINGAPORE INSTITUTE OF MANAGEMENT</p> </div>
     </div>	
 	
-    <div className="row d-flex justify-content-left" style={{ marginLeft: "16rem" }} >
+    <div className="row d-flex justify-content-center" style={{ marginTop: "-1rem" }} >
       <div style={printTextStyle_01}>
         <p>{get(document, "additionalData.description")}</p>
       </div>
     </div>	
 	
-    <div className="row d-flex justify-content-center" style={{ marginTop: "-1rem", marginLeft: "0rem"  }}>
+    <div className="row d-flex justify-content-center"style={{ marginTop: "-2.5rem" }}>
       <div style={printTextStyle_01}>
 		<p>{get(document, "additionalData.description1")}</p>
       </div>
     </div>	
 	
 	
-    <div style={SIMprintTextStyle_TNR05}>&nbsp;</div>	
+	
 	<div style={SIMprintTextStyle_LSR01}>It is hereby certified that</div>
-    <div style={SIMprintTextStyle_TNR05}>&nbsp;</div>
-    <p style={SIMprintTextStyle_TNR04}>{get(document, "recipient.name")}</p>
-    <div style={SIMprintTextStyle_LSR01} >&nbsp;</div>			
+    <div style={SIMprintTextStyle_LSR01}> </div>
+				<br /> 
+ 
+    <p style={SIMprintTextStyle_TNR04}><strong>{get(document, "recipient.name")}</strong></p>	
+			
     <div style={SIMprintTextStyle_LSR01} >having attended the prescribed course</div>
     <div style={SIMprintTextStyle_LSR01}>and successfully passed the required  </div>
     <div style={SIMprintTextStyle_LSR01}>examination(s) was awarded the</div>
-	<div style={supportSUSSTextStyle}>{get(document, "name")}</div>	
+	<div style={supportSUSSTextStyle}><strong>{get(document, "additionalData.description")}</strong></div>	
+	<div style={supportSUSSTextStyle}><strong>{get(document, "additionalData.description1")}</strong></div>		
     <div style={printTextStyle}>&nbsp;</div>
 	
     <div className="row d-flex justify-content-left" style={{ marginLeft: "0rem" }} >
 	  <p style={SIMprintTextStyle_LSR01}>on </p>
-      <p style={SIMprintTextStyle_TNR03}>&nbsp; {renderIssuingDate(document)}</p>
+      <p style={SIMprintTextStyle_TNR03}>&nbsp; <strong>{renderIssuingDate(document)}</strong></p>
     </div>
   </div>
 );
@@ -301,7 +314,7 @@ export const renderFooter = document => (
   <div className="container">
     <div className="row d-flex justify-content-center">
       <div className="col-6 text-left">&nbsp;</div>
-      <div className="col-6 text-right"style={{ marginLeft: "-14rem"}}>
+      <div className="col-6 text-right"style={{ marginLeft: "-22rem"}}>
         {get(document, "additionalData.transcriptId")}
       </div>
     </div>
@@ -314,11 +327,7 @@ const Template = ({ document }) => (
     <div className="container" style={{ border: 0, borderColor: "#AAA", borderStyle: "solid" }}>
       {renderLogoSIM()}
       {renderAwardText(document)}
-
-
       {renderTwoSignatures(document)}
- 
-
     </div>
       {renderFooter(document)}
   </div>
